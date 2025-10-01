@@ -8,6 +8,7 @@ find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(rclcpp REQUIRED)
+find_package(bt_common_nodes)
 
 find_package(MPI REQUIRED)
 if(NOT TARGET MPI::MPI_C)
@@ -24,13 +25,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Source files
 set(UIS
-    src/qt_example_gui.ui
+    src/example_gui.ui
 )
 
 qt5_wrap_ui(UI_HEADERS ${UIS})
 
 set(SRCS ${UI_HEADERS}
-
+    src/example_widget.cpp
+    include/example_widget.hpp
 )
 
 # Common dependencies for all targets
@@ -39,6 +41,7 @@ set(COMMON_DEPS
     behaviortree_cpp
     behaviortree_ros2
     rclcpp
+    bt_common_nodes
 )
 
 # Shared library
