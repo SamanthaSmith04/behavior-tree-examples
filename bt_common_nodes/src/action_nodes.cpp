@@ -213,8 +213,18 @@ BT::NodeStatus OpenFileDialog::tick()
     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
     QString file_filter = getBTInput<std::string>(this, FILE_FILTER_PORT_KEY).c_str();
 
-    // Set initial directory to ~/.aims
-    QString initial_dir = QDir::homePath() + "/.aims/plg/";
+    QString initial_dir;
+    auto blackboard = this->config().blackboard;
+    std::cout << "Project folder from blackboard: " << blackboard->get<std::string>("project_folder") << std::endl;
+    if (blackboard->get<std::string>("project_folder") != "") {
+        std::string project_folder = blackboard->get<std::string>("project_folder");
+        // if (std::filesystem::exists(project_folder)) {
+            initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
+        // }
+    }
+    else {
+        initial_dir = QDir::homePath() + "/.aims/";
+    }
     QString fileName = QFileDialog::getOpenFileName(main_gui, dialog_title, initial_dir, file_filter);
     if (fileName.isEmpty()) {
         return BT::NodeStatus::FAILURE;
@@ -461,7 +471,17 @@ BT::NodeStatus OpenDirectoryDialog::tick()
     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
 
     // Set initial directory to ~/.aims
-    QString initial_dir = QDir::homePath() + "/.aims/plg/";
+    QString initial_dir;
+    auto blackboard = this->config().blackboard;
+    if (blackboard->get<std::string>("project_folder") != "") {
+        std::string project_folder = blackboard->get<std::string>("project_folder");
+        if (std::filesystem::exists(project_folder)) {
+            initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
+        }
+    }
+    else {
+        initial_dir = QDir::homePath() + "/.aims/";
+    }
     QString dir_path = QFileDialog::getExistingDirectory(main_gui, dialog_title, initial_dir);
     if (dir_path.isEmpty()) {
         return BT::NodeStatus::FAILURE;
