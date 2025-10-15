@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="CheckAtDestination" editable="true">
+            <inout_port name="joint_trajectory"/>
+        </Action>
+        <Action ID="ExecuteMotionPlan" editable="true">
+            <input_port name="joint_trajectory"/>
+        </Action>
+        <Action ID="ListenForPointCloud" editable="true">
+            <output_port name="point_cloud"/>
+        </Action>
+        <Action ID="ListenForTrajectory" editable="true">
+            <output_port name="joint_trajectory"/>
+            <output_port name="num_points"/>
+        </Action>
+        <Action ID="PubTrajectoryPreview" editable="true">
+            <input_port name="joint_trajectory"/>
+        </Action>
+        <Action ID="QueueTrajPoint" editable="true">
+            <input_port name="point_queue"/>
+            <input_port name="joint_trajectory"/>
+        </Action>
+        <Action ID="ReplaceStartState" editable="true">
+            <input_port name="motion_plan"/>
+        </Action>
+        <Action ID="StartPointQueueMode" editable="true"/>
+        <Action ID="StopTrajMode" editable="true"/>
+    </TreeNodesModel>
+</root>

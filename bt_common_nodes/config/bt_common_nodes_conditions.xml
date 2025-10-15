@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Condition ID="CheckBTStatus" editable="true">
+            <input_port name="bt_status"/>
+        </Condition>
+        <Condition ID="CheckBTVariableValue" editable="true">
+            <input_port name="variable_name"/>
+            <input_port name="expected_value"/>
+        </Condition>
+        <Condition ID="CheckIntValueEquality" editable="true">
+            <input_port name="value_1"/>
+            <input_port name="value_2"/>
+        </Condition>
+        <Condition ID="WaitForGuiInput" editable="true">
+            <input_port name="button"/>
+        </Condition>
+        <Condition ID="WaitForGuiInputOnTick" editable="true">
+            <input_port name="button"/>
+        </Condition>
+    </TreeNodesModel>
+</root>
