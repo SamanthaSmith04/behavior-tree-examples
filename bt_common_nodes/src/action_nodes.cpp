@@ -3,6 +3,11 @@
 namespace bt_common_nodes 
 {
 
+ProcessTraj::ProcessTraj(const std::string& name, const BT::NodeConfig& config)
+    : BT::SyncActionNode(name, config)
+{
+}
+
 BT::NodeStatus ProcessTraj::tick() 
 {
     auto trajectory = getBTInput<trajectory_msgs::msg::JointTrajectory>(this, JOINT_TRAJECTORY_INPUT_PORT_KEY);

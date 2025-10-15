@@ -24,6 +24,12 @@ find_package(pushcorp_msgs QUIET)
 
 # motoman specific
 find_package(motoros2_interfaces QUIET)
+if(motoros2_interfaces_FOUND)
+    add_compile_definitions(HAS_MOTOMAN_SUPPORT)
+    message(STATUS "Motoman support enabled in bt_common_nodes")
+else()
+    message(STATUS "Motoman support disabled in bt_common_nodes - motoros2_interfaces not found")
+endif()
 
 # point clouds
 find_package(pcl_ros QUIET)
@@ -67,6 +73,11 @@ if(capsen_planning_FOUND AND capsen_vision_FOUND AND plg_msgs_FOUND)
     )
     list(APPEND COMMON_DEPS capsen_planning capsen_vision plg_msgs)
     message(STATUS "Including Capsen grinding and vision nodes")
+endif()
+
+if(motoros2_interfaces_FOUND)
+    list(APPEND COMMON_DEPS motoros2_interfaces)
+    message(STATUS "Including Motoman interface dependencies")
 endif()
 
 if(pushcorp_msgs_FOUND)
@@ -117,21 +128,21 @@ if(SRCS)
     
     ament_target_dependencies(${PROJECT_NAME} ${COMMON_DEPS})
     
-    # Link Qt5 libraries
-    target_link_libraries(${PROJECT_NAME}
-        Qt5::Core
-        Qt5::Gui
-        Qt5::Widgets
-        ${PCL_LIBRARIES}
-    )
-    
-    # Installation for library
-    install(TARGETS ${PROJECT_NAME}
-        EXPORT ${PROJECT_NAME}_targets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-    )
+# Link Qt5 libraries and other dependencies
+target_link_libraries(${PROJECT_NAME}
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Widgets
+    ${PCL_LIBRARIES}
+    yaml-cpp
+)   
+ # Installation for library
+install(TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}_targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
 endif()
 
 # Install header files
