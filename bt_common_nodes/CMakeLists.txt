@@ -24,12 +24,6 @@ find_package(pushcorp_msgs QUIET)
 
 # motoman specific
 find_package(motoros2_interfaces QUIET)
-if(motoros2_interfaces_FOUND)
-    add_compile_definitions(HAS_MOTOMAN_SUPPORT)
-    message(STATUS "Motoman support enabled in bt_common_nodes")
-else()
-    message(STATUS "Motoman support disabled in bt_common_nodes - motoros2_interfaces not found")
-endif()
 
 # point clouds
 find_package(pcl_ros QUIET)
@@ -88,10 +82,6 @@ if(pushcorp_msgs_FOUND)
     message(STATUS "Including PushCorp nodes")
 endif()
 
-if(motoros2_interfaces_FOUND)
-    list(APPEND COMMON_DEPS motoros2_interfaces)
-    message(STATUS "Including Motoman nodes")
-endif()
 
 if(pcl_ros_FOUND AND pcl_conversions_FOUND)
     list(APPEND COMMON_DEPS pcl_ros pcl_conversions)
@@ -109,24 +99,28 @@ if(SRCS)
         $<INSTALL_INTERFACE:include>
     )
     
+    ament_target_dependencies(${PROJECT_NAME} ${COMMON_DEPS})
+    
     # Set compile definitions based on optional packages found
     if(capsen_planning_FOUND AND capsen_vision_FOUND AND plg_msgs_FOUND)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_CAPSEN_SUPPORT)
+        message(STATUS "Capsen support enabled in bt_common_nodes")
     endif()
     
     if(pushcorp_msgs_FOUND)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_PUSHCORP_SUPPORT)
+        message(STATUS "PushCorp support enabled in bt_common_nodes")
     endif()
     
     if(motoros2_interfaces_FOUND)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_MOTOMAN_SUPPORT)
+        message(STATUS "Motoman support enabled in bt_common_nodes")
     endif()
     
     if(pcl_ros_FOUND AND pcl_conversions_FOUND)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_PCL_SUPPORT)
+        message(STATUS "PCL support enabled in bt_common_nodes")
     endif()
-    
-    ament_target_dependencies(${PROJECT_NAME} ${COMMON_DEPS})
     
 # Link Qt5 libraries and other dependencies
 target_link_libraries(${PROJECT_NAME}

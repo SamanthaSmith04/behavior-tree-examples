@@ -28,6 +28,7 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl_conversions/pcl_conversions.h>
 #endif
+#include <fstream> 
 
 #include "yaml_utils.hpp"
 #include "utils.hpp"
