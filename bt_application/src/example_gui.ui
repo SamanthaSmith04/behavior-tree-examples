@@ -28,6 +28,9 @@
        </widget>
       </item>
       <item>
+       <widget class="QTextEdit" name="example_text_edit"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="example_button">
         <property name="text">
          <string>PushButton</string>

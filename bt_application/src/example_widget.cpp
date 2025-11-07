@@ -31,6 +31,8 @@ ExampleWidget::ExampleWidget(rclcpp::Node::SharedPtr ros_node, QWidget *parent)
 
   // SET Blackboard values here
   blackboard->set("main_gui", static_cast<QWidget*>(this));
+  blackboard->set("example_button", static_cast<QAbstractButton*>(ui_->example_button));
+  blackboard->set("example_text_edit", static_cast<QTextEdit*>(ui_->example_text_edit));
 
   // Register custom nodes in the factory if any
   BT::BehaviorTreeFactory factory;
