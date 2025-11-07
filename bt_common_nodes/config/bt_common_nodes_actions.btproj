@@ -26,6 +26,10 @@
             <input_port name="combo_box"/>
             <output_port name="combo_box_index"/>
         </Action>
+        <Action ID="SetTextEditText" editable="true">
+            <input_port name="text_edit"/>
+            <input_port name="text"/>
+        </Action>
         <Action ID="GetCurrentJointState" editable="true">
             <output_port name="joint_state"/>
         </Action>

@@ -118,6 +118,20 @@ BT::NodeStatus GetComboBoxIndex::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
+SetTextEditText::SetTextEditText(const std::string& name, const BT::NodeConfig& config) :
+    BT::SyncActionNode(name, config)
+{}
+
+BT::NodeStatus SetTextEditText::tick() 
+{    
+    auto text_edit_key = getBTInput<std::string>(this, TEXT_EDIT_PORT_KEY);
+    auto* text_edit = this->config().blackboard->get<QTextEdit*>(text_edit_key);
+    auto text = getBTInput<std::string>(this, TEXT_PORT_KEY);
+
+    text_edit->setText(QString::fromStdString(text));
+    return BT::NodeStatus::SUCCESS;
+}
+
 ClearTrajectory::ClearTrajectory(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)
 {}

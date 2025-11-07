@@ -162,6 +162,27 @@ class GetComboBoxIndex : public BT::SyncActionNode
 };
 
 /**
+ * @brief The SetTextEditText class
+ * Action Node that sets the text of a specified QLabel GUI element.
+ * Note: This node assumes that the QLabel pointer is stored in the
+ * blackboard with the key provided in the input port.
+ */
+class SetTextEditText : public BT::SyncActionNode
+{
+  public:
+  inline static std::string TEXT_EDIT_PORT_KEY = "text_edit";
+  inline static std::string TEXT_PORT_KEY = "text";
+    SetTextEditText(const std::string& name, const BT::NodeConfig& config);
+    BT::NodeStatus tick() override;
+
+    static BT::PortsList providedPorts()
+    {
+        return {BT::InputPort<std::string>(TEXT_EDIT_PORT_KEY), BT::InputPort<std::string>(TEXT_PORT_KEY)};
+    }
+};
+
+
+/**
  * @brief The AddMsgToTextEdit class
  * Action Node that appends a message to a specified QTextEdit GUI element.
  * It takes three input ports: 'output_text_box' for the name of the QTextEdit in the blackboard,
