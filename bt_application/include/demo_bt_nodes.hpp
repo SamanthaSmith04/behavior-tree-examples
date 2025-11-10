@@ -33,8 +33,8 @@ namespace example_bt_nodes
             // This method is used to define the ports of the node
             static BT::PortsList providedPorts()
             {
-              return{ BT::InputPort<std::string>("example_input"),
-                      BT::OutputPort<std::string>("example_output") };
+              return{ BT::InputPort<std::string>(ExampleInputKey),
+                      BT::OutputPort<std::string>(ExampleOutputKey) };
             }
 
             // This is the main method that is called when the node is ticked
