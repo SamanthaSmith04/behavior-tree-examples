@@ -99,8 +99,6 @@ if(SRCS)
         $<INSTALL_INTERFACE:include>
     )
     
-    ament_target_dependencies(${PROJECT_NAME} ${COMMON_DEPS})
-    
     # Set compile definitions based on optional packages found
     if(capsen_planning_FOUND AND capsen_vision_FOUND AND plg_msgs_FOUND)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_CAPSEN_SUPPORT)
@@ -121,6 +119,8 @@ if(SRCS)
         target_compile_definitions(${PROJECT_NAME} PUBLIC HAS_PCL_SUPPORT)
         message(STATUS "PCL support enabled in bt_common_nodes")
     endif()
+    ament_target_dependencies(${PROJECT_NAME} ${COMMON_DEPS})
+    
     
 # Link Qt5 libraries and other dependencies
 target_link_libraries(${PROJECT_NAME}
