@@ -202,6 +202,48 @@ public:
 };
 #endif
 
+#ifdef HAS_MOTOMAN_SUPPORT
+/**
+ * @brief Reads a single IO point from the motoros2 controller.
+ * Service Node that reads the value of a specified IO point using the ReadSingleIO service.
+ * Outputs the read value to a blackboard port.
+ */
+class ReadSingleIO : public BT::RosServiceNode<motoros2_interfaces::srv::ReadSingleIO>
+{
+public:
+  inline static std::string IO_NAME_INPUT_PORT_KEY = "io_address";
+  inline static std::string IO_VALUE_OUTPUT_PORT_KEY = "io_value";
+
+  inline static BT::PortsList providedPorts()
+  {
+      return providedBasicPorts({ BT::InputPort<int>(IO_NAME_INPUT_PORT_KEY),
+                                  BT::OutputPort<int>(IO_VALUE_OUTPUT_PORT_KEY)});
+  }
+  using RosServiceNode<motoros2_interfaces::srv::ReadSingleIO>::RosServiceNode;
+  bool setRequest(typename Request::SharedPtr& request) override;
+  BT::NodeStatus onResponseReceived(const typename Response::SharedPtr& response) override;
+};
+
+/**
+ * @brief Writes a single IO point to the motoros2 controller.
+ * Service Node that writes a specified value to an IO point using the WriteSingleIO service.
+ */
+class WriteSingleIO : public BT::RosServiceNode<motoros2_interfaces::srv::WriteSingleIO>
+{
+public:
+  inline static std::string IO_NAME_INPUT_PORT_KEY = "io_address";
+  inline static std::string IO_VALUE_INPUT_PORT_KEY = "io_value"; 
+  inline static BT::PortsList providedPorts()
+  {
+      return providedBasicPorts({ BT::InputPort<int>(IO_NAME_INPUT_PORT_KEY),
+                                  BT::InputPort<int>(IO_VALUE_INPUT_PORT_KEY)});
+  }
+  using RosServiceNode<motoros2_interfaces::srv::WriteSingleIO>::RosServiceNode;
+  bool setRequest(typename Request::SharedPtr& request) override;
+  BT::NodeStatus onResponseReceived(const typename Response::SharedPtr& response) override;
+};  
+#endif
+
 /**
  * @brief The StopTrajMode class
  * Service Node that stops any ongoing trajectory execution in the motoros2 controller.
