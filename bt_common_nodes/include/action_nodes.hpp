@@ -57,6 +57,22 @@ class ProcessTraj : public BT::SyncActionNode
     }
 };
 
+class ModuloOperator : public BT::SyncActionNode
+{
+  public:
+    inline static std::string DIVIDEND_INPUT_PORT_KEY = "dividend";
+    inline static std::string DIVISOR_INPUT_PORT_KEY = "divisor";
+    inline static std::string REMAINDER_OUTPUT_PORT_KEY = "remainder";
+    ModuloOperator(const std::string& name, const BT::NodeConfig& config);
+    BT::NodeStatus tick() override;
+    static BT::PortsList providedPorts()
+    {
+        return {BT::InputPort<int>(DIVIDEND_INPUT_PORT_KEY),
+                BT::InputPort<int>(DIVISOR_INPUT_PORT_KEY),
+                BT::OutputPort<int>(REMAINDER_OUTPUT_PORT_KEY)};
+    }
+};
+
 /**
  * @brief The ResetSpinBoxValue class
  * Action Node that resets a specified QSpinBox GUI element to zero.

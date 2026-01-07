@@ -8,6 +8,24 @@ ProcessTraj::ProcessTraj(const std::string& name, const BT::NodeConfig& config)
 {
 }
 
+ModuloOperator::ModuloOperator(const std::string& name, const BT::NodeConfig& config)
+    : BT::SyncActionNode(name, config)
+{
+}
+
+BT::NodeStatus ModuloOperator::tick() 
+{
+    int dividend = getBTInput<int>(this, DIVIDEND_INPUT_PORT_KEY);
+    int divisor = getBTInput<int>(this, DIVISOR_INPUT_PORT_KEY);
+    if (divisor == 0) {
+        RCLCPP_ERROR(rclcpp::get_logger("ModuloOperator"), "Divisor cannot be zero.");
+        return BT::NodeStatus::FAILURE;
+    }
+    int remainder = dividend % divisor;
+    setOutput(REMAINDER_OUTPUT_PORT_KEY, remainder);
+    return BT::NodeStatus::SUCCESS;
+}
+
 BT::NodeStatus ProcessTraj::tick() 
 {
     auto trajectory = getBTInput<trajectory_msgs::msg::JointTrajectory>(this, JOINT_TRAJECTORY_INPUT_PORT_KEY);
