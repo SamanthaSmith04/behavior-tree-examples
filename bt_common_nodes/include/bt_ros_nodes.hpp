@@ -15,6 +15,8 @@
 #include "motoros2_interfaces/srv/queue_traj_point.hpp"
 #include "motoros2_interfaces/msg/queue_result_enum.hpp"
 #include "motoros2_interfaces/srv/start_point_queue_mode.hpp"
+#include "motoros2_interfaces/srv/read_single_io.hpp"
+#include "motoros2_interfaces/srv/write_single_io.hpp"
 #endif
 
 #include "std_srvs/srv/set_bool.hpp"

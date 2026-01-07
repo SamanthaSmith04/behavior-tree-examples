@@ -208,27 +208,37 @@ BT::NodeStatus StartPointQueueMode::onResponseReceived(const typename Response::
 #ifdef HAS_MOTOMAN_SUPPORT
 bool ReadSingleIO::setRequest(typename Request::SharedPtr& request)
 {
-    request->io_address = getBTInput<int>(this, IO_NAME_INPUT_PORT_KEY);
+    request->address = getBTInput<int>(this, IO_NAME_INPUT_PORT_KEY);
     // RCLCPP_INFO(logger(), "Attempting to read from IO address: %d", request->io_address);
     return true;
 }
 BT::NodeStatus ReadSingleIO::onResponseReceived(const typename Response::SharedPtr& response)
 {
-    RCLCPP_INFO(logger(), "Read IO address %d: value = %d", response->io_address, response->io_value);
-    setOutput(IO_VALUE_OUTPUT_PORT_KEY, response->io_value);
+    if (!response->success)
+    {
+        RCLCPP_ERROR(logger(), "Failed to read IO! Error code: %d", response->result_code);
+        return BT::NodeStatus::FAILURE;
+    }
+    RCLCPP_INFO(logger(), "Read IO: value = %d", response->value);
+    setOutput(IO_VALUE_OUTPUT_PORT_KEY, response->value);
     return BT::NodeStatus::SUCCESS;
 }
 
 bool WriteSingleIO::setRequest(typename Request::SharedPtr& request)
 {
-    request->io_address = getBTInput<int>(this, IO_NAME_INPUT_PORT_KEY);
-    request->io_value = getBTInput<int>(this, IO_VALUE_INPUT_PORT_KEY);
+    request->address = getBTInput<int>(this, IO_NAME_INPUT_PORT_KEY);
+    request->value = getBTInput<int>(this, IO_VALUE_INPUT_PORT_KEY);
     // RCLCPP_INFO(logger(), "Writing value %d to IO address: %d", request->io_value, request->io_address);
     return true;
 }
 BT::NodeStatus WriteSingleIO::onResponseReceived(const typename Response::SharedPtr& response)
 {
-    RCLCPP_INFO(logger(), "Wrote IO address %d: value = %d", response->io_address, response->io_value);
+    if (!response->success)
+    {
+        RCLCPP_ERROR(logger(), "Failed to write IO! Error code: %d", response->result_code);
+        return BT::NodeStatus::FAILURE;
+    }
+    RCLCPP_INFO(logger(), "Wrote IO");
     return BT::NodeStatus::SUCCESS;
 }
 #endif
