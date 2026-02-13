@@ -13,6 +13,7 @@ find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
 # grinding specific
 find_package(capsen_planning QUIET)
@@ -58,6 +59,7 @@ set(COMMON_DEPS
     std_srvs
     control_msgs
     yaml-cpp
+    visualization_msgs
 )
 
 # Conditionally add files based on optional packages

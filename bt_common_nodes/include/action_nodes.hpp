@@ -21,6 +21,7 @@
 #include <yaml-cpp/yaml.h>
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <visualization_msgs/msg/marker.hpp>
 
 #ifdef HAS_PCL_SUPPORT
 #include <pcl/point_cloud.h>
@@ -490,6 +491,28 @@ class ConcatAllTrajectoryPlans : public BT::SyncActionNode
     ConcatAllTrajectoryPlans(const std::string& name, const BT::NodeConfig& config);
     BT::NodeStatus tick() override;
 };
+
+class PubMeshMarker : public BT::RosTopicPubNode<visualization_msgs::msg::Marker>
+{
+public:
+  inline static std::string MESH_PATH_INPUT_PORT_KEY = "mesh_filepath";
+  inline static std::string FRAME_ID_PORT_KEY = "frame_id";
+
+  inline static BT::PortsList providedPorts()
+  {
+    return providedBasicPorts({
+        BT::InputPort<std::string>(MESH_PATH_INPUT_PORT_KEY),
+        BT::InputPort<std::string>(FRAME_ID_PORT_KEY)
+    });
+  }
+
+  PubMeshMarker(const std::string& name,
+                const BT::NodeConfig& conf,
+                const BT::RosNodeParams& params);
+
+  bool setMessage(visualization_msgs::msg::Marker& msg) override;
+};
+
 
 } // namespace bt_common_nodes
 

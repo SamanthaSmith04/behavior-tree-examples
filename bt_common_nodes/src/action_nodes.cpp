@@ -620,4 +620,52 @@ BT::NodeStatus ConcatAllTrajectoryPlans::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
+PubMeshMarker::PubMeshMarker(const std::string& name,
+                             const BT::NodeConfig& conf,
+                             const BT::RosNodeParams& params)
+  : BT::RosTopicPubNode<visualization_msgs::msg::Marker>(name, conf, params)
+{}
+
+bool PubMeshMarker::setMessage(visualization_msgs::msg::Marker& msg)
+{
+  // Get inputs from BT
+  auto mesh_path = getBTInput<std::string>(this, MESH_PATH_INPUT_PORT_KEY);
+  auto frame_id = getBTInput<std::string>(this, FRAME_ID_PORT_KEY);
+
+  // Fill marker message
+  msg.header.frame_id = frame_id;
+  msg.header.stamp = rclcpp::Clock().now();
+
+  msg.id = 0;
+
+  msg.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
+  msg.action = visualization_msgs::msg::Marker::ADD;
+
+  msg.mesh_resource = "file://" + mesh_path;
+
+  // Default pose
+  msg.pose.position.x = 0.0;
+  msg.pose.position.y = 0.0;
+  msg.pose.position.z = 0.0;
+  msg.pose.orientation.x = 0.0;
+  msg.pose.orientation.y = 0.0;
+  msg.pose.orientation.z = 0.0;
+  msg.pose.orientation.w = 1.0;
+
+  // Scale
+  msg.scale.x = 1.0;
+  msg.scale.y = 1.0;
+  msg.scale.z = 1.0;
+
+  msg.color.r = 0.8;
+  msg.color.g = 0.8;
+  msg.color.b = 0.8;
+  msg.color.a = 1.0;
+
+  msg.lifetime = rclcpp::Duration::from_seconds(0.0); 
+
+  return true;
+}
+
+
 } // namespace bt_common_nodes
