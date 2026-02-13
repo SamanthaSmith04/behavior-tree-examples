@@ -26,6 +26,53 @@ BT::NodeStatus WaitForGuiInput::tick()
     return BT::NodeStatus::RUNNING;
 }
 
+WaitForSpinBoxValueChange::WaitForSpinBoxValueChange(const std::string& name, const BT::NodeConfig& config)
+    : BT::ConditionNode(name, config), value_changed_(false)
+{
+    auto spin_box_key = getBTInput<std::string>(this, SPIN_BOX_PORT_KEY);
+    auto* spin_box = this->config().blackboard->get<QAbstractSpinBox*>(spin_box_key);
+    if (auto* spin = qobject_cast<QSpinBox*>(spin_box))
+    {
+        QObject::connect(spin, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int) { value_changed_ = true; });
+    }
+    else if (auto* dspin = qobject_cast<QDoubleSpinBox*>(spin_box))
+    {
+        QObject::connect(dspin, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), [this](double) { value_changed_ = true; });
+    }
+    else
+    {
+        throw std::runtime_error("Widget is not a QSpinBox or QDoubleSpinBox");
+    }
+}
+
+BT::NodeStatus WaitForSpinBoxValueChange::tick()
+{
+    if (value_changed_)
+    {
+        value_changed_ = false;
+        return BT::NodeStatus::SUCCESS;
+    }
+    return BT::NodeStatus::FAILURE;
+}
+
+WaitForCheckBoxValueChange::WaitForCheckBoxValueChange(const std::string& name, const BT::NodeConfig& config)
+    : BT::ConditionNode(name, config), value_changed_(false)
+{
+    auto check_box_key = getBTInput<std::string>(this, CHECK_BOX_PORT_KEY);
+    auto* check_box = this->config().blackboard->get<QCheckBox*>(check_box_key);
+    QObject::connect(check_box, &QCheckBox::stateChanged, [this](int) { value_changed_ = true; });
+}
+
+BT::NodeStatus WaitForCheckBoxValueChange::tick()
+{
+    if (value_changed_)
+    {
+        value_changed_ = false;
+        return BT::NodeStatus::SUCCESS;
+    }
+    return BT::NodeStatus::FAILURE;
+}
+
 WaitForGuiInputOnTick::WaitForGuiInputOnTick(const std::string& name, const BT::NodeConfig& config)
     : BT::ConditionNode(name, config), ok_(true)
 {

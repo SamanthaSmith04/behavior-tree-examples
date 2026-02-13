@@ -6,6 +6,12 @@
 #include "behaviortree_cpp/bt_factory.h"
 #include "behaviortree_cpp/condition_node.h"
 
+#include <QAbstractButton>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
+#include <QAbstractSpinBox>
+
 #include "utils.hpp"
 
 namespace bt_common_nodes 
@@ -53,6 +59,50 @@ class WaitForGuiInputOnTick : public BT::ConditionNode
 
     std::atomic_bool ok_;
     std::atomic_bool running_;
+};
+
+/**
+ * @brief Condition node that monitors the state of a Qt spin box.
+ * @details A pointer to the monitored spin box (QSpinBox* or QDoubleSpinBox*) is provided via the blackboard using the key defined in
+ * the input port. When the spin box value is changed, the node returns failure the next time it is checked.
+ */
+class WaitForSpinBoxValueChange : public BT::ConditionNode
+{
+  public:
+    inline static std::string SPIN_BOX_PORT_KEY = "spin_box";
+    static BT::PortsList providedPorts()
+    {
+        return { BT::InputPort<std::string>(SPIN_BOX_PORT_KEY) };
+    }
+
+    WaitForSpinBoxValueChange(const std::string& name, const BT::NodeConfig& config);
+
+  protected:
+    BT::NodeStatus tick() override;
+
+    std::atomic_bool value_changed_;
+};
+
+/**
+ * @brief Condition node that monitors the state of a Qt check box.
+ * @details A pointer to the monitored check box (QCheckBox*) is provided via the blackboard using the key defined in
+ * the input port. When the check box state is changed, the node returns failure the next time it is checked.
+ */
+class WaitForCheckBoxValueChange : public BT::ConditionNode
+{
+  public:
+    inline static std::string CHECK_BOX_PORT_KEY = "check_box";
+    static BT::PortsList providedPorts()
+    {
+        return { BT::InputPort<std::string>(CHECK_BOX_PORT_KEY) };
+    }
+
+    WaitForCheckBoxValueChange(const std::string& name, const BT::NodeConfig& config);
+
+  protected:
+    BT::NodeStatus tick() override;
+
+    std::atomic_bool value_changed_;
 };
 
 /**
