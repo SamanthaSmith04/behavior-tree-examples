@@ -89,7 +89,7 @@ BT::NodeStatus GetValueFromSpinBox::tick()
         throw std::runtime_error("Widget is not a QSpinBox or QDoubleSpinBox");
     }
 
-    std::cout << "NEW VALUE: " << value << std::endl;
+    // std::cout << "NEW VALUE: " << value << std::endl;
     setOutput(VALUE_OUTPUT_PORT_KEY, value);
     return BT::NodeStatus::SUCCESS;
 }
