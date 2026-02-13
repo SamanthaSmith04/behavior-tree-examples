@@ -71,9 +71,25 @@ GetValueFromSpinBox::GetValueFromSpinBox(const std::string& name, const BT::Node
 BT::NodeStatus GetValueFromSpinBox::tick() 
 {
     auto spin_box_name = getBTInput<std::string>(this, SPIN_BOX_NAME_PORT_KEY);
-    auto spin_box = this->config().blackboard->get<QSpinBox*>(spin_box_name);
-    auto value = spin_box->value();
 
+    QAbstractSpinBox* widget = this->config().blackboard->get<QAbstractSpinBox*>(spin_box_name);
+
+    double value = 0.0;
+
+    if (auto* spin = qobject_cast<QSpinBox*>(widget))
+    {
+        value = static_cast<int>(spin->value());
+    }
+    else if (auto* dspin = qobject_cast<QDoubleSpinBox*>(widget))
+    {
+        value = static_cast<double>(dspin->value());
+    }
+    else
+    {
+        throw std::runtime_error("Widget is not a QSpinBox or QDoubleSpinBox");
+    }
+
+    std::cout << "NEW VALUE: " << value << std::endl;
     setOutput(VALUE_OUTPUT_PORT_KEY, value);
     return BT::NodeStatus::SUCCESS;
 }
@@ -89,6 +105,53 @@ BT::NodeStatus GetValueFromCheckBox::tick()
     auto value = check_box->isChecked();
 
     setOutput(VALUE_OUTPUT_PORT_KEY, value);
+    return BT::NodeStatus::SUCCESS;
+}
+
+SetQWidgetValue::SetQWidgetValue(const std::string& name, const BT::NodeConfig& config) :
+    BT::SyncActionNode(name, config)
+{}
+
+BT::NodeStatus SetQWidgetValue::tick() 
+{
+    auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
+    auto widget = this->config().blackboard->get<QWidget*>(widget_name);
+    auto value = getBTInput<BT::Any>(this, VALUE_PORT_KEY);
+
+    if (auto* spin_box_a = qobject_cast<QAbstractSpinBox*>(widget)) {
+        if (auto* spin = qobject_cast<QSpinBox*>(widget))
+        {
+            spin->setValue(value.cast<int>());
+        }
+        else if (auto* dspin = qobject_cast<QDoubleSpinBox*>(widget))
+        {
+            dspin->setValue(value.cast<double>());
+        }
+    }
+    else if (auto* check_box = qobject_cast<QCheckBox*>(widget))
+    {
+        check_box->setChecked(value.cast<bool>());
+    }
+    else
+    {
+        throw std::runtime_error("Widget is not a QSpinBox, QDoubleSpinBox, or QCheckBox");
+    }
+    
+    return BT::NodeStatus::SUCCESS;
+}
+
+EnableQWidget::EnableQWidget(const std::string& name, const BT::NodeConfig& config) :
+    BT::SyncActionNode(name, config)
+{}
+
+BT::NodeStatus EnableQWidget::tick() 
+{
+    auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
+    auto widget = this->config().blackboard->get<QWidget*>(widget_name);
+    auto enable = getBTInput<bool>(this, ENABLE_STATUS_PORT_KEY);
+
+    widget->setEnabled(enable);
+    
     return BT::NodeStatus::SUCCESS;
 }
 

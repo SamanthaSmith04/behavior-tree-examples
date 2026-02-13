@@ -126,12 +126,44 @@ class GetValueFromSpinBox : public BT::SyncActionNode
     inline static BT::PortsList providedPorts()
     {
       return { BT::InputPort<std::string>(SPIN_BOX_NAME_PORT_KEY),
-                                  BT::OutputPort<int>(VALUE_OUTPUT_PORT_KEY) };
+                                  BT::OutputPort<BT::Any>(VALUE_OUTPUT_PORT_KEY) };
     }
 
     GetValueFromSpinBox(const std::string& name, const BT::NodeConfig& config);
 
     BT::NodeStatus tick() override;
+};
+
+/**
+ * @brief Sets the value of a specified QWidget (QSpinBox, QDoubleSpinBox, or QCheckBox) to a given value.
+ * The widget is identified by a name provided via the blackboard, and the value to set is provided as an input port. The node checks the type of the widget and sets the value accordingly
+ * Note: This node assumes that the QWidget pointer is stored in the blackboard with the key provided in the input port.
+ * Can be extended to support more widget types as needed.
+ */
+class SetQWidgetValue : public BT::SyncActionNode
+{
+  public:
+    inline static std::string WIDGET_NAME_PORT_KEY = "widget_name";
+    inline static std::string VALUE_PORT_KEY = "value";
+    SetQWidgetValue(const std::string& name, const BT::NodeConfig& config);
+    BT::NodeStatus tick() override;
+    static BT::PortsList providedPorts()
+    {
+        return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<BT::Any>(VALUE_PORT_KEY)};
+    }
+};
+
+class EnableQWidget : public BT::SyncActionNode
+{
+  public:
+    inline static std::string WIDGET_NAME_PORT_KEY = "widget_name";
+    inline static std::string ENABLE_STATUS_PORT_KEY = "enable";
+    EnableQWidget(const std::string& name, const BT::NodeConfig& config);
+    BT::NodeStatus tick() override;
+    static BT::PortsList providedPorts()
+    {
+        return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<bool>(ENABLE_STATUS_PORT_KEY)};
+    }
 };
 
 /**
