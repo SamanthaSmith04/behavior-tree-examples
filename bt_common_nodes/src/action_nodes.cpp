@@ -94,6 +94,24 @@ BT::NodeStatus GetValueFromSpinBox::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
+GetValueFromLineEdit::GetValueFromLineEdit(const std::string& name, const BT::NodeConfig& config) :
+    BT::SyncActionNode(name, config)
+{}
+
+BT::NodeStatus GetValueFromLineEdit::tick() 
+{
+    auto spin_box_name = getBTInput<std::string>(this, LINE_EDIT_NAME_PORT_KEY);
+
+    auto widget = this->config().blackboard->get<QLineEdit*>(spin_box_name);
+
+    std::string value = widget->text().toStdString();
+
+    // std::cout << "NEW VALUE: " << value << std::endl;
+    setOutput(VALUE_OUTPUT_PORT_KEY, value);
+    return BT::NodeStatus::SUCCESS;
+}
+
+
 GetValueFromCheckBox::GetValueFromCheckBox(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)
 {}

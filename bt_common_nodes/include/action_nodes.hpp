@@ -17,6 +17,7 @@
 #include <QTextEdit>
 #include <QComboBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QFileDialog>
 #include <yaml-cpp/yaml.h>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -131,6 +132,23 @@ class GetValueFromSpinBox : public BT::SyncActionNode
     }
 
     GetValueFromSpinBox(const std::string& name, const BT::NodeConfig& config);
+
+    BT::NodeStatus tick() override;
+};
+
+class GetValueFromLineEdit : public BT::SyncActionNode
+{
+  public:
+    inline static std::string LINE_EDIT_NAME_PORT_KEY = "gui_line_edit_input";  
+    inline static std::string VALUE_OUTPUT_PORT_KEY = "value";  
+
+    inline static BT::PortsList providedPorts()
+    {
+      return { BT::InputPort<std::string>(LINE_EDIT_NAME_PORT_KEY),
+                                  BT::OutputPort<std::string>(VALUE_OUTPUT_PORT_KEY) };
+    }
+
+    GetValueFromLineEdit(const std::string& name, const BT::NodeConfig& config);
 
     BT::NodeStatus tick() override;
 };
