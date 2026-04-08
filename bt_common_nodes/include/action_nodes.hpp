@@ -75,24 +75,6 @@ class ModuloOperator : public BT::SyncActionNode
     }
 };
 
-/**
- * @brief The ResetSpinBoxValue class
- * Action Node that resets a specified QSpinBox GUI element to zero.
- * Note: This node assumes that the QSpinBox pointer is stored in the
- * blackboard with the key provided in the input port.
- */
-class ResetSpinBoxValue : public BT::SyncActionNode
-{
-  public:
-    inline static std::string SPIN_BOX_NAME_PORT_KEY = "gui_spin_box_input";
-    static BT::PortsList providedPorts()
-    {
-        return { BT::InputPort<std::string>(SPIN_BOX_NAME_PORT_KEY)};
-    }
-
-    ResetSpinBoxValue(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-};
 
 /**
  * @brief The SetBlackboardString class
@@ -113,100 +95,6 @@ class SetBlackboardString : public BT::SyncActionNode
     }
 };
 
-/**
- * @brief The GetValueFromSpinBox class
- * Action Node that retrieves the current value from a specified QSpinBox GUI element.
- * Note: This node assumes that the QSpinBox pointer is stored in the
- * blackboard with the key provided in the input port.
- */
-class GetValueFromSpinBox : public BT::SyncActionNode
-{
-  public:
-    inline static std::string SPIN_BOX_NAME_PORT_KEY = "gui_spin_box_input";  // name of spin box in GUI
-    inline static std::string VALUE_OUTPUT_PORT_KEY = "value";  // value from spin box
-
-    inline static BT::PortsList providedPorts()
-    {
-      return { BT::InputPort<std::string>(SPIN_BOX_NAME_PORT_KEY),
-                                  BT::OutputPort<BT::Any>(VALUE_OUTPUT_PORT_KEY) };
-    }
-
-    GetValueFromSpinBox(const std::string& name, const BT::NodeConfig& config);
-
-    BT::NodeStatus tick() override;
-};
-
-class GetValueFromLineEdit : public BT::SyncActionNode
-{
-  public:
-    inline static std::string LINE_EDIT_NAME_PORT_KEY = "gui_line_edit_input";  
-    inline static std::string VALUE_OUTPUT_PORT_KEY = "value";  
-
-    inline static BT::PortsList providedPorts()
-    {
-      return { BT::InputPort<std::string>(LINE_EDIT_NAME_PORT_KEY),
-                                  BT::OutputPort<std::string>(VALUE_OUTPUT_PORT_KEY) };
-    }
-
-    GetValueFromLineEdit(const std::string& name, const BT::NodeConfig& config);
-
-    BT::NodeStatus tick() override;
-};
-
-/**
- * @brief Sets the value of a specified QWidget (QSpinBox, QDoubleSpinBox, or QCheckBox) to a given value.
- * The widget is identified by a name provided via the blackboard, and the value to set is provided as an input port. The node checks the type of the widget and sets the value accordingly
- * Note: This node assumes that the QWidget pointer is stored in the blackboard with the key provided in the input port.
- * Can be extended to support more widget types as needed.
- */
-class SetQWidgetValue : public BT::SyncActionNode
-{
-  public:
-    inline static std::string WIDGET_NAME_PORT_KEY = "widget_name";
-    inline static std::string VALUE_PORT_KEY = "value";
-    SetQWidgetValue(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<BT::Any>(VALUE_PORT_KEY)};
-    }
-};
-
-class EnableQWidget : public BT::SyncActionNode
-{
-  public:
-    inline static std::string WIDGET_NAME_PORT_KEY = "widget_name";
-    inline static std::string ENABLE_STATUS_PORT_KEY = "enable";
-    EnableQWidget(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<bool>(ENABLE_STATUS_PORT_KEY)};
-    }
-};
-
-/**
- * @brief The GetValueFromCheckBox class
- * Action Node that retrieves the current state from a specified QCheckBox GUI element.
- * Note: This node assumes that the QCheckBox pointer is stored in the
- * blackboard with the key provided in the input port.
- */
-class GetValueFromCheckBox : public BT::SyncActionNode
-{
-  public:
-    inline static std::string CHECK_BOX_NAME_PORT_KEY = "gui_check_box_input";  // name of check box in GUI
-    inline static std::string VALUE_OUTPUT_PORT_KEY = "value";  // value from check box
-
-    inline static BT::PortsList providedPorts()
-    {
-      return { BT::InputPort<std::string>(CHECK_BOX_NAME_PORT_KEY),
-                                  BT::OutputPort<bool>(VALUE_OUTPUT_PORT_KEY) };
-    }
-
-    GetValueFromCheckBox(const std::string& name, const BT::NodeConfig& config);
-
-    BT::NodeStatus tick() override;
-};
 
 /**
  * @brief The GetComboBoxIndex class
@@ -228,50 +116,6 @@ class GetComboBoxIndex : public BT::SyncActionNode
     }
 };
 
-/**
- * @brief The SetTextEditText class
- * Action Node that sets the text of a specified QLabel GUI element.
- * Note: This node assumes that the QLabel pointer is stored in the
- * blackboard with the key provided in the input port.
- */
-class SetTextEditText : public BT::SyncActionNode
-{
-  public:
-  inline static std::string TEXT_EDIT_PORT_KEY = "text_edit";
-  inline static std::string TEXT_PORT_KEY = "text";
-    SetTextEditText(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(TEXT_EDIT_PORT_KEY), BT::InputPort<std::string>(TEXT_PORT_KEY)};
-    }
-};
-
-
-/**
- * @brief The AddMsgToTextEdit class
- * Action Node that appends a message to a specified QTextEdit GUI element.
- * It takes three input ports: 'output_text_box' for the name of the QTextEdit in the blackboard,
- * 'message' for the text to append, and 'message_type' to specify the type of message (e.g., "info", "warning", "error").
- * Note: This node assumes that the QTextEdit pointer is stored in the blackboard with the key provided in the input port.
- */
-class AddMsgToTextEdit : public BT::SyncActionNode
-{
-  public:
-  inline static std::string OUTPUT_BOX_PORT_KEY = "output_text_box";
-  inline static std::string MESSAGE_PORT_KEY = "message";
-  inline static std::string MESSAGE_TYPE_PORT_KEY = "message_type"; // "info", "warning", "error"
-    AddMsgToTextEdit(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(OUTPUT_BOX_PORT_KEY), 
-                BT::InputPort<std::string>(MESSAGE_PORT_KEY),
-                BT::InputPort<std::string>(MESSAGE_TYPE_PORT_KEY)};
-    }
-};
 
 class ClearTrajectory : public BT::SyncActionNode
 {
@@ -317,23 +161,6 @@ class SaveMotionPlanToYAML : public BT::SyncActionNode
 };
 
 
-// class OpenFileDialog : public BT::SyncActionNode
-// {
-//   public:
-//     OpenFileDialog(const std::string& name, const BT::NodeConfig& config);
-//     BT::NodeStatus tick() override;
-
-//     inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
-//     inline static std::string FILE_FILTER_PORT_KEY = "file_filter";
-//     inline static std::string SELECTED_FILE_PATH_OUTPUT_PORT_KEY = "selected_file_path";
-//     static BT::PortsList providedPorts()
-//     {
-//         return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a file"),
-//                 BT::InputPort<std::string>(FILE_FILTER_PORT_KEY, "YAML files (*.yaml);;All files (*.*)"),
-//                 BT::OutputPort<std::string>(SELECTED_FILE_PATH_OUTPUT_PORT_KEY)};
-//     }
-// };
-
 #ifdef HAS_PCL_SUPPORT
 class LoadPCDFile : public BT::SyncActionNode
 {
@@ -364,20 +191,6 @@ class SavePCDFile : public BT::SyncActionNode
 };
 #endif
 
-class SetLabelColor : public BT::SyncActionNode
-{
-  public:
-  inline static std::string LABEL_PORT_KEY = "label";
-  inline static std::string COLOR_PORT_KEY = "color"; // in format "#RRGGBB"
-    SetLabelColor(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
-
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(LABEL_PORT_KEY), 
-                BT::InputPort<std::string>(COLOR_PORT_KEY)};
-    }
-};
 
 #ifdef HAS_PCL_SUPPORT
 class PubPointCloud2 : public BT::RosTopicPubNode<sensor_msgs::msg::PointCloud2>
@@ -481,20 +294,6 @@ class LoadMotionPlanYAMLsFromDirectory : public BT::SyncActionNode
     }
 };
 
-// class OpenDirectoryDialog : public BT::SyncActionNode
-// {
-//   public:
-//     OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config);
-//     BT::NodeStatus tick() override;
-
-//     inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
-//     inline static std::string SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY = "selected_directory_path";
-//     static BT::PortsList providedPorts()
-//     {
-//         return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a directory"),
-//                 BT::OutputPort<std::string>(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY)};
-//     }
-// };
 
 class ConcatAllTrajectoryPlans : public BT::SyncActionNode
 {

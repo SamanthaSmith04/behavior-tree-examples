@@ -225,6 +225,11 @@ class GetValueFromGui : public BT::SyncActionNode
             setOutput(OUTPUT_KEY, text_edit->toPlainText().toStdString());
             if (DEBUG_QT_NODES) std::cout << "TextEdit value: " << text_edit->toPlainText().toStdString() << std::endl;
         }
+        else if (auto* label = qobject_cast<QLabel*>(widget))
+        {
+            setOutput(OUTPUT_KEY, label->text().toStdString());
+            if (DEBUG_QT_NODES) std::cout << "Label value: " << label->text().toStdString() << std::endl;
+        }
         else
         {
             std::cerr << "Widget is not a supported type, please use a supported type or extend the GetValueFromGui node to support the type of widget you are using" << std::endl;
@@ -307,6 +312,11 @@ class SetGuiValue : public BT::SyncActionNode
             text_edit->setPlainText(QString::fromStdString(input_value));
             if (DEBUG_QT_NODES) std::cout << "Set TextEdit value: " << input_value << std::endl;
         }
+        else if (auto* label = qobject_cast<QLabel*>(widget))
+        {
+            label->setText(QString::fromStdString(input_value));
+            if (DEBUG_QT_NODES) std::cout << "Set Label value: " << input_value << std::endl;
+        }
         else
         {
             std::cerr << "Widget is not a supported type for setting value, please use a supported type or extend the SetGuiValue node to support the type of widget you are using" << std::endl;
@@ -316,6 +326,161 @@ class SetGuiValue : public BT::SyncActionNode
         return BT::NodeStatus::SUCCESS;
     }
 };
+
+class ResetGuiValue : public BT::SyncActionNode
+{
+  public:
+    ResetGuiValue(const std::string& name, const BT::NodeConfig& config) : BT::SyncActionNode(name, config)
+    {}
+  
+    inline static std::string WIDGET_KEY = "widget";
+
+    static BT::PortsList providedPorts()
+    {
+        return { BT::InputPort<std::string>(WIDGET_KEY) };
+    }
+
+    BT::NodeStatus tick() override
+    {
+        auto widget_name = getBTInput<std::string>(this, WIDGET_KEY);
+        auto* widget = this->config().blackboard->get<QWidget*>(widget_name);
+
+        if (auto* spin_box = qobject_cast<QAbstractSpinBox*>(widget)) {
+            spin_box->clear();
+            if (DEBUG_QT_NODES) std::cout << "Reset SpinBox value" << std::endl;
+        }
+        else if (auto* check_box = qobject_cast<QCheckBox*>(widget))
+        {
+            check_box->setChecked(false);
+            if (DEBUG_QT_NODES) std::cout << "Reset CheckBox value" << std::endl;
+        }
+        else if (auto* slider = qobject_cast<QAbstractSlider*>(widget))
+        {
+            slider->setValue(slider->minimum());
+            if (DEBUG_QT_NODES) std::cout << "Reset Slider value" << std::endl;
+        }
+        else if (auto* combo_box = qobject_cast<QComboBox*>(widget))
+        {
+            combo_box->setCurrentIndex(0);
+            if (DEBUG_QT_NODES) std::cout << "Reset ComboBox value" << std::endl;
+        }
+        else if (auto* line_edit = qobject_cast<QLineEdit*>(widget))
+        {
+            line_edit->clear();
+            if (DEBUG_QT_NODES) std::cout << "Reset LineEdit value" << std::endl;
+        }
+        else if (auto* text_edit = qobject_cast<QTextEdit*>(widget))
+        {
+            text_edit->clear();
+            if (DEBUG_QT_NODES) std::cout << "Reset TextEdit value" << std::endl;
+        }
+        else if (auto* label = qobject_cast<QLabel*>(widget))
+        {
+            label->clear();
+            if (DEBUG_QT_NODES) std::cout << "Reset Label value" << std::endl;
+        }
+        else
+        {
+            std::cerr << "Widget is not a supported type for resetting value, please use a supported type or extend the ResetGuiValue node to support the type of widget you are using" << std::endl;
+            return BT::NodeStatus::FAILURE;
+        }
+
+        return BT::NodeStatus::SUCCESS;
+    }
+};
+
+
+class EnableQWidget : public BT::SyncActionNode
+{
+  public:
+    inline static std::string WIDGET_NAME_PORT_KEY = "widget_name";
+    inline static std::string ENABLE_STATUS_PORT_KEY = "enable";
+    EnableQWidget(const std::string& name, const BT::NodeConfig& config) : BT::SyncActionNode(name, config) {}
+
+    static BT::PortsList providedPorts()
+    {
+        return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<bool>(ENABLE_STATUS_PORT_KEY)};
+    }
+
+    BT::NodeStatus EnableQWidget::tick() 
+    {
+        auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
+        auto widget = this->config().blackboard->get<QWidget*>(widget_name);
+        auto enable = getBTInput<bool>(this, ENABLE_STATUS_PORT_KEY);
+
+        widget->setEnabled(enable);
+        
+        return BT::NodeStatus::SUCCESS;
+    }
+};
+
+class AddLogMsgToTextEdit : public BT::SyncActionNode
+{
+    public:
+    inline static std::string OUTPUT_BOX_PORT_KEY = "output_text_box";
+    inline static std::string MESSAGE_PORT_KEY = "message";
+    inline static std::string MESSAGE_TYPE_PORT_KEY = "message_type"; // "info", "warning", "error"
+    AddLogMsgToTextEdit(const std::string& name, const BT::NodeConfig& config) : BT::SyncActionNode(name, config) {}
+
+    static BT::PortsList providedPorts()
+    {
+      return {BT::InputPort<std::string>(OUTPUT_BOX_PORT_KEY), 
+        BT::InputPort<std::string>(MESSAGE_PORT_KEY),
+        BT::InputPort<std::string>(MESSAGE_TYPE_PORT_KEY)};
+    }
+    BT::NodeStatus tick() override {
+        auto textEditKey = getBTInput<std::string>(this, OUTPUT_BOX_PORT_KEY);
+        auto q_widget = this->config().blackboard->get<QWidget*>(textEditKey);
+        auto textEdit = qobject_cast<QTextEdit*>(q_widget);
+        if (!textEdit) {
+            std::cerr << "Widget with key " << textEditKey << " is not a QTextEdit" << std::endl;
+            return BT::NodeStatus::FAILURE;
+        }
+        auto message = getBTInput<std::string>(this, MESSAGE_PORT_KEY);
+        auto messageType = getBTInput<std::string>(this, "message_type");
+        
+        if (messageType == "error") {
+            textEdit->setTextColor(Qt::red);
+            message = "[ERROR] - " + message;
+        }
+        else if (messageType == "warning") {
+            textEdit->setTextColor(Qt::darkYellow);
+            message = "[WARNING] - " + message;
+        }
+        else { // default to info
+            textEdit->setTextColor(Qt::black);
+        }
+        
+        // Append the message with the selected color
+        textEdit->append(QString::fromStdString(message));
+        
+        return BT::NodeStatus::SUCCESS;
+    }
+};
+
+class SetGUITextColor : public BT::SyncActionNode
+{
+    public:
+    inline static std::string TEXT_BOX_PORT_KEY = "text_box";
+    inline static std::string COLOR_PORT_KEY = "color"; // "red", "green", "blue", etc.
+    SetGUITextColor(const std::string& name, const BT::NodeConfig& config) : BT::SyncActionNode(name, config) {}
+
+    static BT::PortsList providedPorts()
+    {
+      return {BT::InputPort<std::string>(TEXT_BOX_PORT_KEY), 
+        BT::InputPort<std::string>(COLOR_PORT_KEY)};
+    }
+    BT::NodeStatus tick() override {
+        auto textBoxKey = getBTInput<std::string>(this, TEXT_BOX_PORT_KEY);
+        auto colorName = getBTInput<std::string>(this, COLOR_PORT_KEY);
+        
+        auto q_widget = this->config().blackboard->get<QWidget*>(textBoxKey);
+        q_widget->setStyleSheet(QString("QLabel { color : %1; }").arg(QString::fromStdString(colorName)));
+        
+        return BT::NodeStatus::SUCCESS;
+    }
+};
+
 
 /**
  * @brief An Action node that opens a file dialog to select a file. 

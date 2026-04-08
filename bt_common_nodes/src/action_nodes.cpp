@@ -50,157 +50,6 @@ BT::NodeStatus SetBlackboardString::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
-ResetSpinBoxValue::ResetSpinBoxValue(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config) 
-{}
-
-BT::NodeStatus ResetSpinBoxValue::tick()
-{
-    auto spin_box_name = getBTInput<std::string>(this, SPIN_BOX_NAME_PORT_KEY);
-    auto spin_box = this->config().blackboard->get<QSpinBox*>(spin_box_name);
-    spin_box->setValue(0);
-    
-
-    return BT::NodeStatus::SUCCESS;
-}
-
-GetValueFromSpinBox::GetValueFromSpinBox(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus GetValueFromSpinBox::tick() 
-{
-    auto spin_box_name = getBTInput<std::string>(this, SPIN_BOX_NAME_PORT_KEY);
-
-    QAbstractSpinBox* widget = this->config().blackboard->get<QAbstractSpinBox*>(spin_box_name);
-
-    double value = 0.0;
-
-    if (auto* spin = qobject_cast<QSpinBox*>(widget))
-    {
-        value = static_cast<int>(spin->value());
-    }
-    else if (auto* dspin = qobject_cast<QDoubleSpinBox*>(widget))
-    {
-        value = static_cast<double>(dspin->value());
-    }
-    else
-    {
-        throw std::runtime_error("Widget is not a QSpinBox or QDoubleSpinBox");
-    }
-
-    // std::cout << "NEW VALUE: " << value << std::endl;
-    setOutput(VALUE_OUTPUT_PORT_KEY, value);
-    return BT::NodeStatus::SUCCESS;
-}
-
-GetValueFromLineEdit::GetValueFromLineEdit(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus GetValueFromLineEdit::tick() 
-{
-    auto spin_box_name = getBTInput<std::string>(this, LINE_EDIT_NAME_PORT_KEY);
-
-    auto widget = this->config().blackboard->get<QLineEdit*>(spin_box_name);
-
-    std::string value = widget->text().toStdString();
-
-    // std::cout << "NEW VALUE: " << value << std::endl;
-    setOutput(VALUE_OUTPUT_PORT_KEY, value);
-    return BT::NodeStatus::SUCCESS;
-}
-
-
-GetValueFromCheckBox::GetValueFromCheckBox(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus GetValueFromCheckBox::tick() 
-{
-    auto check_box_name = getBTInput<std::string>(this, CHECK_BOX_NAME_PORT_KEY);
-    auto check_box = this->config().blackboard->get<QCheckBox*>(check_box_name);
-    auto value = check_box->isChecked();
-
-    setOutput(VALUE_OUTPUT_PORT_KEY, value);
-    return BT::NodeStatus::SUCCESS;
-}
-
-SetQWidgetValue::SetQWidgetValue(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus SetQWidgetValue::tick() 
-{
-    auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
-    auto widget = this->config().blackboard->get<QWidget*>(widget_name);
-    auto value = getBTInput<BT::Any>(this, VALUE_PORT_KEY);
-
-    if (auto* spin_box_a = qobject_cast<QAbstractSpinBox*>(widget)) {
-        if (auto* spin = qobject_cast<QSpinBox*>(widget))
-        {
-            spin->setValue(value.cast<int>());
-        }
-        else if (auto* dspin = qobject_cast<QDoubleSpinBox*>(widget))
-        {
-            dspin->setValue(value.cast<double>());
-        }
-    }
-    else if (auto* check_box = qobject_cast<QCheckBox*>(widget))
-    {
-        check_box->setChecked(value.cast<bool>());
-    }
-    else
-    {
-        throw std::runtime_error("Widget is not a QSpinBox, QDoubleSpinBox, or QCheckBox");
-    }
-    
-    return BT::NodeStatus::SUCCESS;
-}
-
-EnableQWidget::EnableQWidget(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus EnableQWidget::tick() 
-{
-    auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
-    auto widget = this->config().blackboard->get<QWidget*>(widget_name);
-    auto enable = getBTInput<bool>(this, ENABLE_STATUS_PORT_KEY);
-
-    widget->setEnabled(enable);
-    
-    return BT::NodeStatus::SUCCESS;
-}
-
-AddMsgToTextEdit::AddMsgToTextEdit(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus AddMsgToTextEdit::tick() 
-{    
-    auto textEditKey = getBTInput<std::string>(this, OUTPUT_BOX_PORT_KEY);
-    auto textEdit = this->config().blackboard->get<QTextEdit*>(textEditKey);
-    auto message = getBTInput<std::string>(this, MESSAGE_PORT_KEY);
-    auto messageType = getBTInput<std::string>(this, "message_type");
-    
-    if (messageType == "error") {
-        textEdit->setTextColor(Qt::red);
-        message = "[ERROR] - " + message;
-    }
-    else if (messageType == "warning") {
-        textEdit->setTextColor(Qt::darkYellow);
-        message = "[WARNING] - " + message;
-    }
-    else { // default to info
-        textEdit->setTextColor(Qt::black);
-    }
-    
-    // Append the message with the selected color
-    textEdit->append(QString::fromStdString(message));
-    
-    return BT::NodeStatus::SUCCESS;
-}
 
 GetComboBoxIndex::GetComboBoxIndex(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)
@@ -217,19 +66,6 @@ BT::NodeStatus GetComboBoxIndex::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
-SetTextEditText::SetTextEditText(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus SetTextEditText::tick() 
-{    
-    auto text_edit_key = getBTInput<std::string>(this, TEXT_EDIT_PORT_KEY);
-    auto* text_edit = this->config().blackboard->get<QTextEdit*>(text_edit_key);
-    auto text = getBTInput<std::string>(this, TEXT_PORT_KEY);
-
-    text_edit->setText(QString::fromStdString(text));
-    return BT::NodeStatus::SUCCESS;
-}
 
 ClearTrajectory::ClearTrajectory(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)
@@ -313,40 +149,6 @@ BT::NodeStatus SaveMotionPlanToYAML::tick()
 }
 
 
-// OpenFileDialog::OpenFileDialog(const std::string& name, const BT::NodeConfig& config) :
-//     BT::SyncActionNode(name, config)
-// {}
-// BT::NodeStatus OpenFileDialog::tick()
-// {
-//     // open file dialog to select point cloud file
-//     auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
-//     if (!main_gui) {
-//         return BT::NodeStatus::FAILURE;
-//     }
-//     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
-//     QString file_filter = getBTInput<std::string>(this, FILE_FILTER_PORT_KEY).c_str();
-
-//     QString initial_dir;
-//     auto blackboard = this->config().blackboard;
-//     std::cout << "Project folder from blackboard: " << blackboard->get<std::string>("project_folder") << std::endl;
-//     if (blackboard->get<std::string>("project_folder") != "") {
-//         std::string project_folder = blackboard->get<std::string>("project_folder");
-//         // if (std::filesystem::exists(project_folder)) {
-//             initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
-//         // }
-//     }
-//     else {
-//         initial_dir = QDir::homePath() + "/.aims/";
-//     }
-//     QString fileName = QFileDialog::getOpenFileName(main_gui, dialog_title, initial_dir, file_filter);
-//     if (fileName.isEmpty()) {
-//         return BT::NodeStatus::FAILURE;
-//     }
-
-//     setOutput(SELECTED_FILE_PATH_OUTPUT_PORT_KEY, fileName.toStdString());
-//     return BT::NodeStatus::SUCCESS;
-// }
-
 #ifdef HAS_PCL_SUPPORT
 
 LoadPCDFile::LoadPCDFile(const std::string& name, const BT::NodeConfig& config) :
@@ -393,23 +195,6 @@ BT::NodeStatus SavePCDFile::tick()
 }
 #endif
 
-SetLabelColor::SetLabelColor(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-
-BT::NodeStatus SetLabelColor::tick()
-{
-    auto label = this->config().blackboard->get<QLabel*>(getBTInput<std::string>(this, LABEL_PORT_KEY));
-    auto color = getBTInput<std::string>(this, COLOR_PORT_KEY);
-
-    if (!label) {
-        RCLCPP_ERROR(rclcpp::get_logger("SetLabelColor"), "Label pointer is null");
-        return BT::NodeStatus::FAILURE;
-    }
-
-    label->setStyleSheet(QString("QLabel { color : %1; }").arg(QString::fromStdString(color)));
-    return BT::NodeStatus::SUCCESS;
-}
 
 #ifdef HAS_PCL_SUPPORT
 PubPointCloud2::PubPointCloud2(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params) :
@@ -570,39 +355,6 @@ BT::NodeStatus LoadMotionPlanYAMLsFromDirectory::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
-// OpenDirectoryDialog::OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config) :
-//     BT::SyncActionNode(name, config)
-// {}
-
-// BT::NodeStatus OpenDirectoryDialog::tick()
-// {
-//     // open directory dialog to select a folder
-//     auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
-//     if (!main_gui) {
-//         return BT::NodeStatus::FAILURE;
-//     }
-//     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
-
-//     // Set initial directory to ~/.aims
-//     QString initial_dir;
-//     auto blackboard = this->config().blackboard;
-//     if (blackboard->get<std::string>("project_folder") != "") {
-//         std::string project_folder = blackboard->get<std::string>("project_folder");
-//         if (std::filesystem::exists(project_folder)) {
-//             initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
-//         }
-//     }
-//     else {
-//         initial_dir = QDir::homePath() + "/.aims/";
-//     }
-//     QString dir_path = QFileDialog::getExistingDirectory(main_gui, dialog_title, initial_dir);
-//     if (dir_path.isEmpty()) {
-//         return BT::NodeStatus::FAILURE;
-//     }
-
-//     setOutput(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY, dir_path.toStdString());
-//     return BT::NodeStatus::SUCCESS;
-// }
 
 ConcatAllTrajectoryPlans::ConcatAllTrajectoryPlans(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)
