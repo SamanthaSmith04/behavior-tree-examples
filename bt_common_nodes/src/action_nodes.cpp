@@ -313,39 +313,39 @@ BT::NodeStatus SaveMotionPlanToYAML::tick()
 }
 
 
-OpenFileDialog::OpenFileDialog(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
-BT::NodeStatus OpenFileDialog::tick()
-{
-    // open file dialog to select point cloud file
-    auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
-    if (!main_gui) {
-        return BT::NodeStatus::FAILURE;
-    }
-    QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
-    QString file_filter = getBTInput<std::string>(this, FILE_FILTER_PORT_KEY).c_str();
+// OpenFileDialog::OpenFileDialog(const std::string& name, const BT::NodeConfig& config) :
+//     BT::SyncActionNode(name, config)
+// {}
+// BT::NodeStatus OpenFileDialog::tick()
+// {
+//     // open file dialog to select point cloud file
+//     auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
+//     if (!main_gui) {
+//         return BT::NodeStatus::FAILURE;
+//     }
+//     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
+//     QString file_filter = getBTInput<std::string>(this, FILE_FILTER_PORT_KEY).c_str();
 
-    QString initial_dir;
-    auto blackboard = this->config().blackboard;
-    std::cout << "Project folder from blackboard: " << blackboard->get<std::string>("project_folder") << std::endl;
-    if (blackboard->get<std::string>("project_folder") != "") {
-        std::string project_folder = blackboard->get<std::string>("project_folder");
-        // if (std::filesystem::exists(project_folder)) {
-            initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
-        // }
-    }
-    else {
-        initial_dir = QDir::homePath() + "/.aims/";
-    }
-    QString fileName = QFileDialog::getOpenFileName(main_gui, dialog_title, initial_dir, file_filter);
-    if (fileName.isEmpty()) {
-        return BT::NodeStatus::FAILURE;
-    }
+//     QString initial_dir;
+//     auto blackboard = this->config().blackboard;
+//     std::cout << "Project folder from blackboard: " << blackboard->get<std::string>("project_folder") << std::endl;
+//     if (blackboard->get<std::string>("project_folder") != "") {
+//         std::string project_folder = blackboard->get<std::string>("project_folder");
+//         // if (std::filesystem::exists(project_folder)) {
+//             initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
+//         // }
+//     }
+//     else {
+//         initial_dir = QDir::homePath() + "/.aims/";
+//     }
+//     QString fileName = QFileDialog::getOpenFileName(main_gui, dialog_title, initial_dir, file_filter);
+//     if (fileName.isEmpty()) {
+//         return BT::NodeStatus::FAILURE;
+//     }
 
-    setOutput(SELECTED_FILE_PATH_OUTPUT_PORT_KEY, fileName.toStdString());
-    return BT::NodeStatus::SUCCESS;
-}
+//     setOutput(SELECTED_FILE_PATH_OUTPUT_PORT_KEY, fileName.toStdString());
+//     return BT::NodeStatus::SUCCESS;
+// }
 
 #ifdef HAS_PCL_SUPPORT
 
@@ -570,39 +570,39 @@ BT::NodeStatus LoadMotionPlanYAMLsFromDirectory::tick()
     return BT::NodeStatus::SUCCESS;
 }
 
-OpenDirectoryDialog::OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config) :
-    BT::SyncActionNode(name, config)
-{}
+// OpenDirectoryDialog::OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config) :
+//     BT::SyncActionNode(name, config)
+// {}
 
-BT::NodeStatus OpenDirectoryDialog::tick()
-{
-    // open directory dialog to select a folder
-    auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
-    if (!main_gui) {
-        return BT::NodeStatus::FAILURE;
-    }
-    QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
+// BT::NodeStatus OpenDirectoryDialog::tick()
+// {
+//     // open directory dialog to select a folder
+//     auto main_gui = this->config().blackboard->get<QWidget*>("main_gui");
+//     if (!main_gui) {
+//         return BT::NodeStatus::FAILURE;
+//     }
+//     QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
 
-    // Set initial directory to ~/.aims
-    QString initial_dir;
-    auto blackboard = this->config().blackboard;
-    if (blackboard->get<std::string>("project_folder") != "") {
-        std::string project_folder = blackboard->get<std::string>("project_folder");
-        if (std::filesystem::exists(project_folder)) {
-            initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
-        }
-    }
-    else {
-        initial_dir = QDir::homePath() + "/.aims/";
-    }
-    QString dir_path = QFileDialog::getExistingDirectory(main_gui, dialog_title, initial_dir);
-    if (dir_path.isEmpty()) {
-        return BT::NodeStatus::FAILURE;
-    }
+//     // Set initial directory to ~/.aims
+//     QString initial_dir;
+//     auto blackboard = this->config().blackboard;
+//     if (blackboard->get<std::string>("project_folder") != "") {
+//         std::string project_folder = blackboard->get<std::string>("project_folder");
+//         if (std::filesystem::exists(project_folder)) {
+//             initial_dir = QDir::homePath() + QString::fromStdString(project_folder);
+//         }
+//     }
+//     else {
+//         initial_dir = QDir::homePath() + "/.aims/";
+//     }
+//     QString dir_path = QFileDialog::getExistingDirectory(main_gui, dialog_title, initial_dir);
+//     if (dir_path.isEmpty()) {
+//         return BT::NodeStatus::FAILURE;
+//     }
 
-    setOutput(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY, dir_path.toStdString());
-    return BT::NodeStatus::SUCCESS;
-}
+//     setOutput(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY, dir_path.toStdString());
+//     return BT::NodeStatus::SUCCESS;
+// }
 
 ConcatAllTrajectoryPlans::ConcatAllTrajectoryPlans(const std::string& name, const BT::NodeConfig& config) :
     BT::SyncActionNode(name, config)

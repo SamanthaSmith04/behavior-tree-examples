@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="example_bt.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="GetValueFromGui" editable="true">
+            <input_port name="widget"/>
+            <output_port name="output"/>
+        </Action>
+        <Action ID="OpenFileDialog" editable="true">
+            <input_port name="dialog_title"/>
+            <input_port name="file_filter"/>
+            <input_port name="start_folder"/>
+            <output_port name="selected_file_path"/>
+        </Action>
+        <Action ID="SetGuiValue" editable="true">
+            <input_port name="widget"/>
+            <input_port name="input"/>
+        </Action>
+        <Condition ID="WaitForGuiInputEvent" editable="true">
+            <input_port name="widget"/>
+        </Condition>
+    </TreeNodesModel>
+</root>

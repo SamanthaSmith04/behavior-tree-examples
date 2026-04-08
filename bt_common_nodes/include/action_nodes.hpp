@@ -317,22 +317,22 @@ class SaveMotionPlanToYAML : public BT::SyncActionNode
 };
 
 
-class OpenFileDialog : public BT::SyncActionNode
-{
-  public:
-    OpenFileDialog(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
+// class OpenFileDialog : public BT::SyncActionNode
+// {
+//   public:
+//     OpenFileDialog(const std::string& name, const BT::NodeConfig& config);
+//     BT::NodeStatus tick() override;
 
-    inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
-    inline static std::string FILE_FILTER_PORT_KEY = "file_filter";
-    inline static std::string SELECTED_FILE_PATH_OUTPUT_PORT_KEY = "selected_file_path";
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a file"),
-                BT::InputPort<std::string>(FILE_FILTER_PORT_KEY, "YAML files (*.yaml);;All files (*.*)"),
-                BT::OutputPort<std::string>(SELECTED_FILE_PATH_OUTPUT_PORT_KEY)};
-    }
-};
+//     inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
+//     inline static std::string FILE_FILTER_PORT_KEY = "file_filter";
+//     inline static std::string SELECTED_FILE_PATH_OUTPUT_PORT_KEY = "selected_file_path";
+//     static BT::PortsList providedPorts()
+//     {
+//         return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a file"),
+//                 BT::InputPort<std::string>(FILE_FILTER_PORT_KEY, "YAML files (*.yaml);;All files (*.*)"),
+//                 BT::OutputPort<std::string>(SELECTED_FILE_PATH_OUTPUT_PORT_KEY)};
+//     }
+// };
 
 #ifdef HAS_PCL_SUPPORT
 class LoadPCDFile : public BT::SyncActionNode
@@ -481,20 +481,20 @@ class LoadMotionPlanYAMLsFromDirectory : public BT::SyncActionNode
     }
 };
 
-class OpenDirectoryDialog : public BT::SyncActionNode
-{
-  public:
-    OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config);
-    BT::NodeStatus tick() override;
+// class OpenDirectoryDialog : public BT::SyncActionNode
+// {
+//   public:
+//     OpenDirectoryDialog(const std::string& name, const BT::NodeConfig& config);
+//     BT::NodeStatus tick() override;
 
-    inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
-    inline static std::string SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY = "selected_directory_path";
-    static BT::PortsList providedPorts()
-    {
-        return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a directory"),
-                BT::OutputPort<std::string>(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY)};
-    }
-};
+//     inline static std::string DIALOG_TITLE_PORT_KEY = "dialog_title";
+//     inline static std::string SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY = "selected_directory_path";
+//     static BT::PortsList providedPorts()
+//     {
+//         return {BT::InputPort<std::string>(DIALOG_TITLE_PORT_KEY, "Select a directory"),
+//                 BT::OutputPort<std::string>(SELECTED_DIRECTORY_PATH_OUTPUT_PORT_KEY)};
+//     }
+// };
 
 class ConcatAllTrajectoryPlans : public BT::SyncActionNode
 {

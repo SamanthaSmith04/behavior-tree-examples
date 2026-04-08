@@ -47,6 +47,7 @@ list(APPEND SRCS
     src/action_nodes.cpp
     src/condition_nodes.cpp
     src/bt_ros_nodes.cpp
+    include/qt_nodes.hpp
 )
 
 # Common dependencies for all targets

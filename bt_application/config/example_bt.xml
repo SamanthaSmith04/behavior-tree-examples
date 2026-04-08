@@ -1,10 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="Untitled">
-    <AlwaysSuccess/>
+    <Parallel failure_count="1"
+              success_count="1">
+      <Sequence>
+        <WaitForGuiInputEvent widget="example_button"/>
+        <OpenFileDialog dialog_title="Test"
+                        file_filter="*.yaml *.YAML"
+                        start_folder=""
+                        selected_file_path="{path}"/>
+      </Sequence>
+      <Sequence>
+        <WaitForGuiInputEvent widget="example_text_edit"/>
+        <GetValueFromGui widget="example_text_edit"
+                         output="{asf}"/>
+      </Sequence>
+      <Sequence>
+        <WaitForGuiInputEvent widget="example_double_spin_box"/>
+        <GetValueFromGui widget="example_double_spin_box"
+                         output="{v}"/>
+        <SetGuiValue widget="example_text_edit"
+                     input="{v}"/>
+      </Sequence>
+      <Sequence>
+        <WaitForGuiInputEvent widget="example_check_box"/>
+        <GetValueFromGui widget="example_check_box"
+                         output="{tt}"/>
+      </Sequence>
+      <Sequence>
+        <WaitForGuiInputEvent widget="example_slider"/>
+        <GetValueFromGui widget="example_slider"
+                         output="{t}"/>
+        <SetGuiValue widget="example_double_spin_box"
+                     input="{t}"/>
+      </Sequence>
+    </Parallel>
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
-  <TreeNodesModel/>
+  <TreeNodesModel>
+    <Action ID="GetValueFromGui"
+            editable="true">
+      <input_port name="widget"/>
+      <output_port name="output"/>
+    </Action>
+    <Action ID="OpenFileDialog"
+            editable="true">
+      <input_port name="dialog_title"/>
+      <input_port name="file_filter"/>
+      <input_port name="start_folder"/>
+      <output_port name="selected_file_path"/>
+    </Action>
+    <Action ID="SetGuiValue"
+            editable="true">
+      <input_port name="widget"/>
+      <input_port name="input"/>
+    </Action>
+    <Condition ID="WaitForGuiInputEvent"
+               editable="true">
+      <input_port name="widget"/>
+    </Condition>
+  </TreeNodesModel>
 
 </root>

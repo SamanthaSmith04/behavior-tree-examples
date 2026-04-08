@@ -51,6 +51,20 @@
         </item>
        </layout>
       </item>
+      <item>
+       <widget class="QCheckBox" name="example_check_box">
+        <property name="text">
+         <string>CheckBox</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="example_slider">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
