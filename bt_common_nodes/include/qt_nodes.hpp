@@ -327,6 +327,9 @@ class SetGuiValue : public BT::SyncActionNode
     }
 };
 
+/**
+ * @brief An Action node that resets a Qt widget to its default value. 
+ */
 class ResetGuiValue : public BT::SyncActionNode
 {
   public:
@@ -390,6 +393,11 @@ class ResetGuiValue : public BT::SyncActionNode
 };
 
 
+/**
+ * @brief An Action node that enables or disables a specified Qt widget. 
+ * The widget is identified by a name provided via the blackboard, 
+ * and the enable/disable status is provided via an input port.
+ */
 class EnableQWidget : public BT::SyncActionNode
 {
   public:
@@ -402,7 +410,7 @@ class EnableQWidget : public BT::SyncActionNode
         return {BT::InputPort<std::string>(WIDGET_NAME_PORT_KEY), BT::InputPort<bool>(ENABLE_STATUS_PORT_KEY)};
     }
 
-    BT::NodeStatus EnableQWidget::tick() 
+    BT::NodeStatus tick() 
     {
         auto widget_name = getBTInput<std::string>(this, WIDGET_NAME_PORT_KEY);
         auto widget = this->config().blackboard->get<QWidget*>(widget_name);
@@ -414,6 +422,10 @@ class EnableQWidget : public BT::SyncActionNode
     }
 };
 
+/**
+ * @brief Adds colored logging messages to a text edit box
+ * Allows for message types of: 'info', 'warning', 'error' which are colored based on severity
+ */
 class AddLogMsgToTextEdit : public BT::SyncActionNode
 {
     public:
@@ -458,6 +470,9 @@ class AddLogMsgToTextEdit : public BT::SyncActionNode
     }
 };
 
+/**
+ * @brief Sets the text color of a GUI object
+ */
 class SetGUITextColor : public BT::SyncActionNode
 {
     public:
@@ -564,6 +579,7 @@ class OpenDirectoryDialog : public BT::SyncActionNode
                 return BT::NodeStatus::FAILURE;
             }
             QString dialog_title = getBTInput<std::string>(this, DIALOG_TITLE_PORT_KEY).c_str();
+            QString start_folder = getBTInput<std::string>(this, START_FOLDER_PORT_KEY).c_str();
 
             QString initial_dir;
             if (start_folder != "") {
